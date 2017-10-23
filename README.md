@@ -1,1 +1,1 @@
-A simple URL shortener
+A simple URL shortener.
