@@ -1,7 +1,9 @@
 var express = require('express');
+var miniurl = require('./routes/miniurl.js');
 var app = express();
 
 app.use(express.static('public'));
+app.use('/miniurl', miniurl);
 
 app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/description.html');
