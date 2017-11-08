@@ -3,11 +3,11 @@ var miniurl = require('./routes/miniurl.js');
 var app = express();
 
 app.use(express.static('public'));
-app.use('/miniurl', miniurl);
+app.use('/', miniurl);
 
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/description.html');
-});
+// app.get("/", function (request, response) {
+//   response.sendFile(__dirname + '/views/description.html');
+// });
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
