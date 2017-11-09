@@ -11,14 +11,16 @@ function createMiniUrl(db, newUrl, callback){
   var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
   var regex = new RegExp(expression);
   if(newUrl.match(regex)){
-    var short = Math.floor(Math.random() * 1000);
-    var object = {"original": newUrl, "short": short};
     var urls = db.collection('urls');
-    urls.insert(object, function(err, data){
-      if(err){
-        console.log("Unable to add URL. Error: ", err);
-      }
-      callback();
+    var short = urls.count();
+    short.then((result) => {
+      var object = {"original": newUrl, "short": "" + (result + 1)};
+      urls.insert(object, function(err, data){
+        if(err){
+          console.log("Unable to add URL. Error: ", err);
+        }
+        callback();
+      });
     });
   } else {
     console.log("Invalid URL: " + newUrl);
