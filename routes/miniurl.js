@@ -27,6 +27,26 @@ function createMiniUrl(db, newUrl, callback){
   }
 }
 
+function redirectUrl(db, response, shortUrl, callback){
+  var urls = db.collection('urls');
+  var doc = urls.findOne({"short": shortUrl});
+  doc.then((result) => {
+    if(result == null){
+      callback();
+      response.sendFile(path.resolve(__dirname + '/../views/description.html'));
+    } else {
+      var u = result.original;
+      console.log(result);
+      callback();
+      if(u.substring(0, 4) == "http"){
+        response.redirect(301, u);
+      } else {
+        response.redirect(301, "https://" + u);
+      }
+    }
+  });
+}
+
 router.get('/', function(request, response){
   response.sendFile(path.resolve(__dirname + '/../views/description.html'));
 });
@@ -39,6 +59,15 @@ router.get('/new/:newUrl', function(request, response){
     });
   });
   response.sendFile(path.resolve(__dirname + '/../views/description.html'));
+});
+
+router.get('/:shortUrl', function(request, response){
+  MongoClient.connect(url, function(err, db){
+    assert.equal(null, err);
+    redirectUrl(db, response, request.params.shortUrl, function(){
+      db.close();
+    });
+  });
 });
 
 module.exports = router;
