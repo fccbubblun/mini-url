@@ -19,11 +19,12 @@ function createMiniUrl(db, newUrl, callback){
         if(err){
           console.log("Unable to add URL. Error: ", err);
         }
-        callback();
+        callback({"original": object.original, "short": "" + object.short});
       });
     });
   } else {
     console.log("Invalid URL: " + newUrl);
+    callback(null);
   }
 }
 
@@ -36,7 +37,6 @@ function redirectUrl(db, response, shortUrl, callback){
       response.sendFile(path.resolve(__dirname + '/../views/description.html'));
     } else {
       var u = result.original;
-      console.log(result);
       callback();
       if(u.substring(0, 4) == "http"){
         response.redirect(301, u);
@@ -54,11 +54,15 @@ router.get('/', function(request, response){
 router.get('/new/:newUrl', function(request, response){
   MongoClient.connect(url, function(err, db){
     assert.equal(null, err);
-    createMiniUrl(db, request.params.newUrl, function(){
+    createMiniUrl(db, request.params.newUrl, function(json){
       db.close();
+      if(json){
+        response.json(json);
+      } else {
+        response.sendFile(path.resolve(__dirname + '/../views/description.html'));
+      }
     });
   });
-  response.sendFile(path.resolve(__dirname + '/../views/description.html'));
 });
 
 router.get('/:shortUrl', function(request, response){
