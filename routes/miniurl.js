@@ -24,7 +24,7 @@ function createMiniUrl(db, newUrl, callback){
     });
   } else {
     console.log("Invalid URL: " + newUrl);
-    callback(null);
+    callback({"error":"Invalid URL: " + newUrl});
   }
 }
 
@@ -58,8 +58,6 @@ router.get('/new/:newUrl', function(request, response){
       db.close();
       if(json){
         response.json(json);
-      } else {
-        response.sendFile(path.resolve(__dirname + '/../views/description.html'));
       }
     });
   });
